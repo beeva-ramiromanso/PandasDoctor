@@ -1,4 +1,4 @@
-import test_outliers as t
+import eval_outliers as t
 import pandas as pd
 import numpy as np
 
@@ -13,4 +13,5 @@ if __name__ == "__main__":
     x = generate_example()
     y = generate_example()
     d = pd.DataFrame({'example':x,'example2':y})
-    t.detect_outliers(d)
+    t.eval_outliers(d,['example','example2'])
+    t.eval_outliers(d,['example','example2'],method='iqr',print_invalid=True)

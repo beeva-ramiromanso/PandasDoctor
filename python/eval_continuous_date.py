@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import test_datecol as dc
+import eval_datecol as dc
 from dateutil.parser import parse
 
 _granularity = {'days':0,'hours':1,'minutes':2,'seconds':3,
@@ -16,22 +16,39 @@ def delta_subtraction(tdelta_input,nrows,granularity):
     }[granularity]
 
 
-def test_continuous_date(df,column_list,granularity='days'):
+def eval_continuous_date(df,column_list,granularity='days',print_invalid=False):
+
     """
+    Evaluates if the date columns are:
+        1. In a valid date format
+        2. Unique date values for each row
+        3. Continuous with a given granularity.
+
     Test if the difference between the max and min date in a column matches the amount of elements with a given granularity.
     Doesn't require to be sorted.
+
+    Keyword arguments:
+        df (pandas.DataFrame) -- The input DataFrame
+        column_list (list, str) -- A list of columns names to evaluate in the dataframe(df). A single
+            column name can be detected and converted into a single element list
+        granularity (str) -- Granularity of the dates. ['days','hours','minutes',
+            'seconds','milliseconds']
+        print_invalid (boolean) -- If true will print the rows of the dataframe
+            where NA's have been found
     """
+    # TODO - Add methods for mensual and anual granularity
+    # TODO - Add print invalid funcionality
     if not isinstance(column_list,list): column_list = [column_list]
-    all_correct = True
+    found_bad_dates = False
     for col in column_list:
         if sum(df.duplicated(col,keep=False))>0:
+            found_bad_dates = True
             print("Duplicated dates found!")
-            all_correct = False
-        elif dc.test_datecol(df,col):
+        elif not dc.eval_datecol(df,col):
             dates = df[col].apply(parse,dayfirst=True) #maybe df len ?
             tdelta = dates.max() - dates.min()
             result = delta_subtraction(tdelta,dates.shape[0],granularity) == 0
             if not result:
                 print("Non continuous dates in column {0} for the given granularity {1}".format(col,granularity))
-                all_correct = False
-    return(all_correct)
+                found_bad_dates = True
+    return(found_bad_dates)

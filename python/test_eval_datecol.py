@@ -1,5 +1,5 @@
 import pandas as pd
-import test_datecol as t
+import eval_datecol as t
 
 def generate_example():
     # Generate some data
@@ -16,4 +16,4 @@ def generate_example():
 
 if __name__ == "__main__":
     x = generate_example()
-    print(t.test_datecol(x,['col1','col2']))
+    print(t.eval_datecol(x,['col1','col2']))
