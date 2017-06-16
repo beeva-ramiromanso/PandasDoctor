@@ -3,7 +3,7 @@ import numpy as np
 import json
 
 _na_codes = ["missing", "no data", "na", "N/A", "n/a", "NULL", "NA"]
-_na_numeric_codes = ["-999", "999", -999, 999]
+_na_numeric_codes = ["-999", "999"]
 
 
 def eval_NA(df,column_list,print_invalid=False):
@@ -30,27 +30,27 @@ def eval_NA(df,column_list,print_invalid=False):
         if sum(classic_na)>0:
             found_Missing = True
             na_list = np.logical_or(na_list, classic_na)
-            print("NA values found in var {0}".format(col))
+            print("[ERROR] NA values found in var {0}".format(col))
         else:
-            codes_tmp = df[col].isin(_na_codes)
+            codes_tmp = df[col].astype(str).isin(_na_codes)
             codes_out = np.sum(codes_tmp)
-            numeric_tmp = df[col].isin(_na_numeric_codes)
+            numeric_tmp = df[col].astype(str).isin(_na_numeric_codes)
             numeric_out = np.sum(numeric_tmp)
             if codes_out > 0:
                 found_Missing = True
                 na_list = np.logical_or(na_list, codes_tmp)
-                print("{0} NA Aliases found in var {1}".format(codes_out,col))
+                print("[ERROR] {0} NA Aliases found in var {1}".format(codes_out,col))
 
             if numeric_out > 0:
                 found_Missing = True
                 na_list = np.logical_or(na_list, numeric_tmp)
-                print("{0} 999-style aliases found in var {1}, that's usually a code for missing values, please verify!".format(numeric_out,col))
+                print("[ERROR] {0} 999-style aliases found in var {1}, that's usually a code for missing values, please verify!".format(numeric_out,col))
 
     if not found_Missing:
         print("No missing values found in any var!")
     elif print_invalid:
-        print("###################################")
+        print("===================================")
         print("Conflicting rows")
-        print("###################################")
+        print("===================================")
         print(df[na_list])
     return(found_Missing)

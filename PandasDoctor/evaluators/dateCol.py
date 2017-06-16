@@ -24,7 +24,9 @@ def eval_datecol(df,column_list,form='ymd'):
     if not isinstance(column_list,list): column_list = [column_list]
     found_bad_dates = False
     for col in column_list:
-        if not test_single_col(df[col]):
+        if not test_single_col(df[col].astype(str)):
             found_bad_dates = True
-            print("Invalid date format found in column {0}".format(col))
+            print("[ERROR] Invalid date format found in column {0}".format(col))
+    if not found_bad_dates:
+        print("No incorrect date formats found!")
     return(found_bad_dates)

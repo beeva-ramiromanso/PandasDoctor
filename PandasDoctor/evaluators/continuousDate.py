@@ -43,12 +43,14 @@ def eval_continuous_date(df,column_list,granularity='days',print_invalid=False):
     for col in column_list:
         if sum(df.duplicated(col,keep=False))>0:
             found_bad_dates = True
-            print("Duplicated dates found!")
+            print("[ERROR] Duplicated dates found!")
         elif not eval_datecol(df,col):
-            dates = df[col].apply(parse,dayfirst=True) #maybe df len ?
+            dates = df[col].astype(str).apply(parse,dayfirst=True) #maybe df len ?
             tdelta = dates.max() - dates.min()
             result = delta_subtraction(tdelta,dates.shape[0],granularity) == 0
             if not result:
-                print("Non continuous dates in column {0} for the given granularity {1}".format(col,granularity))
+                print("[ERROR] Non continuous dates in column {0} for the given granularity {1}".format(col,granularity))
                 found_bad_dates = True
+    if not found_bad_dates:
+        print("All date columns were continous!")
     return(found_bad_dates)

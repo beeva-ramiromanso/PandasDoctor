@@ -20,11 +20,12 @@ def eval_whitespaces(df,column_list,print_invalid=False):
         if sum(invalid_list)>0:
             found_whitespaces = True
             whitespace_list = np.logical_or(whitespace_list, invalid_list)
+            print("[ERROR] Leading / trailing whitespaces found found in var {0}".format(col))
     if not found_whitespaces:
         print("No leading or trailing whitespaces found in any column!")
     elif print_invalid:
-        print("###################################")
+        print("===================================")
         print("Conflicting rows")
-        print("###################################")
+        print("===================================")
         print(df[whitespace_list])
     return(found_whitespaces)

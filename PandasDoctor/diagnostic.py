@@ -26,30 +26,39 @@ def diagnostic(df,print_invalid=False,continuous_dates = False):
     date_columns =  list(df.select_dtypes(include=['datetime']).columns.values)
 
     results = list()
+    print("##########################")
     print("Validating NA")
+    print("--------------------------")
     results = {"na_status":None,"numeric_status":None,"whitespace_status":None,
     "date_status":None}
     results["na_status"] = eval_NA(df,list(df.columns.values),print_invalid)
 
     #evaluating emptiness!
+    print("##########################")
+    print("Validating outliers")
+    print("--------------------------")
     if numeric_columns:
-        print("Validating outliers")
         results["numeric_status"] = eval_outliers(df,numeric_columns,print_invalid=print_invalid)
     else:
         print("No numeric columns to validate, skiping...")
 
+    print("##########################")
+    print("Validating whitespaces")
+    print("--------------------------")
     if string_columns:
-        print("Validating whitespaces")
         results["whitespace_status"] = eval_whitespaces(df,string_columns)
     else:
         print("No string columns to validate, skiping...")
+    print("##########################")
+    print("Validating Dates")
+    print("--------------------------")
     if date_columns:
         date_status = False
-        print("Validating Dates")
         if continuous_dates:
             results["date_status"] = eval_continuous_date(df,date_columns)
         else:
             results["date_status"] = eval_datecol(df,date_columns)
     else:
         print("No date columns to validate, skiping...")
+    print("##########################")
     return(results)

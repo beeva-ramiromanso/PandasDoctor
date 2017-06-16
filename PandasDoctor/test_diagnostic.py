@@ -20,12 +20,28 @@ class TestDiagnostic(unittest.TestCase):
         #                   "col5":["D","E","F"]
         #                   })
         # self.x = x.append(y,ignore_index=True)
-        dates = pd.date_range('20130101',periods=6)
-        self.x = pd.DataFrame(np.random.randn(6,4),index=dates,columns=list('ABCD'))
+        df1 = pd.DataFrame({ 'A' : [1.,2.,3.,4.],
+                    'B' : pd.date_range('20130101',periods=4),
+                    'C' : pd.Series([5,6,7,8],index=list(range(4)),dtype='float32'),
+                    'D' : np.array([3] * 4,dtype='int32'),
+                    'E' : pd.Categorical(["test","train","test","train"]),
+                    'F' : 'foo' })
+        #now another version with errors
+        df2 = pd.DataFrame({ 'A' : [10.],
+                    'B' : pd.to_datetime('20130110', format='%Y%m%d', errors='ignore'),
+                    'C' : None,
+                    'D' : 1.5,
+                    'E' : pd.Categorical(["N/A"]),
+                    'F' : 'foo ' })
+        self.df1 = df1
+        self.df2 = df1.append(df2)
+        self.df2['E'] = df2['E'].astype('category')
+        self.df2['F'] = df2['F'].astype('category')
 
     def test(self):
-        x = diagnostic(self.x,print_invalid=True)
-        self.assertFalse(x['na_status'])
+        x = diagnostic(self.df1)
+        self.assertFalse(any(v for v in x.itervalues()))
+        #self.assertFalse(x['na_status'])
 
         #    results = {"na_status":None,"numeric_status":None,"whitespace_status":None,
         #    "date_status":None}
