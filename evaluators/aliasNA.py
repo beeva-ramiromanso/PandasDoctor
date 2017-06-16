@@ -2,7 +2,11 @@ import pandas as pd
 import numpy as np
 import json
 
-def evaluate_NA(df,column_list,print_invalid=False):
+_na_codes = ["missing", "no data", "na", "N/A", "n/a", "NULL", "NA"]
+_na_numeric_codes = ["-999", "999", -999, 999]
+
+
+def eval_NA(df,column_list,print_invalid=False):
     """
     Evaluates if NA exist in the selected columns of a dataframe
 
@@ -18,13 +22,6 @@ def evaluate_NA(df,column_list,print_invalid=False):
             where NA's have been found
     """
     if not isinstance(column_list,list): column_list = [column_list]
-    with open('na_codes.json') as data_file:
-        codes = json.load(data_file)
-        na_codes = codes["na_codes"]
-        na_numeric_codes = codes["na_numeric_codes"]
-
-    print("Loaded na codes: {}".format(na_codes))
-    print("Loaded na numeric codes: {}".format(na_numeric_codes))
 
     found_Missing = False
     na_list = np.full(df.shape[0], False, dtype=bool)
@@ -35,9 +32,9 @@ def evaluate_NA(df,column_list,print_invalid=False):
             na_list = np.logical_or(na_list, classic_na)
             print("NA values found in var {0}".format(col))
         else:
-            codes_tmp = df[col].isin(na_codes)
+            codes_tmp = df[col].isin(_na_codes)
             codes_out = np.sum(codes_tmp)
-            numeric_tmp = df[col].isin(na_numeric_codes)
+            numeric_tmp = df[col].isin(_na_numeric_codes)
             numeric_out = np.sum(numeric_tmp)
             if codes_out > 0:
                 found_Missing = True
@@ -51,6 +48,9 @@ def evaluate_NA(df,column_list,print_invalid=False):
 
     if not found_Missing:
         print("No missing values found in any var!")
-    if print_invalid:
+    elif print_invalid:
+        print("###################################")
+        print("Conflicting rows")
+        print("###################################")
         print(df[na_list])
     return(found_Missing)

@@ -1,4 +1,0 @@
-{
-	"na_codes": ["missing", "no data", "na", "N/A", "n/a", "NULL", "NA"],
-	"na_numeric_codes": ["-999", "999", -999, 999]
-}

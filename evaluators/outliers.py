@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-methods = ['z_score','iqr']
+_methods = ['z_score','iqr']
 
 def iqr(arr,range = 1.5):
     """
@@ -100,7 +100,9 @@ def eval_outliers(df, column_list,
 
     if not found_outliers:
         print("No outliers found in any var!")
-
-    if print_invalid:
+    elif print_invalid:
+        print("###################################")
+        print("Conflicting rows")
+        print("###################################")
         print(df[outlier_list])
     return(found_outliers)

@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
-import eval_datecol as dc
+from dateCol import eval_datecol
 from dateutil.parser import parse
 
 _granularity = {'days':0,'hours':1,'minutes':2,'seconds':3,
-'milliseconds':4,'microseconds':5,'nanoseconds':6}
+        'milliseconds':4,'microseconds':5,'nanoseconds':6}
 
 def delta_subtraction(tdelta_input,nrows,granularity):
     return{
@@ -44,7 +44,7 @@ def eval_continuous_date(df,column_list,granularity='days',print_invalid=False):
         if sum(df.duplicated(col,keep=False))>0:
             found_bad_dates = True
             print("Duplicated dates found!")
-        elif not dc.eval_datecol(df,col):
+        elif not eval_datecol(df,col):
             dates = df[col].apply(parse,dayfirst=True) #maybe df len ?
             tdelta = dates.max() - dates.min()
             result = delta_subtraction(tdelta,dates.shape[0],granularity) == 0
